@@ -11,6 +11,11 @@ def main(data_path: str, model_dir: str):
     print(f"Training with {data_path}; output to {model_dir}")
 
 
+    # Create a placeholder model file so the user sees output
+    out_file = Path(model_dir) / "dummy-model.bin"
+    out_file.write_text("placeholder model")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="../data/processed/corpus.jsonl")
