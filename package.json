@@ -8,6 +8,7 @@
     "client": "serve -s client",
     "test": "echo \"No tests specified\"",
     "update": "git pull --rebase"
+
   },
   "dependencies": {
     "express": "^4.18.2",
