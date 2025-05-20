@@ -3,3 +3,5 @@ logs/*
 !logs/.gitkeep
 model/
 .env
+package-lock.json
+

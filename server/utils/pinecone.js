@@ -1,4 +1,5 @@
 
+
 const { PineconeClient } = require('@pinecone-database/pinecone');
 const logger = require('./logger');
 
@@ -16,15 +17,18 @@ client.init({
 const indexName = process.env.PINECONE_INDEX || 'shaka';
 const embeddingModel = process.env.PINECONE_EMBEDDING_MODEL || 'text-embedding-3-large';
 
+
 async function queryRelevant(text, topK = 5) {
   // Placeholder embedding step - replace with your embedding function
   const vector = Array(1536).fill(0); // dummy vector
   try {
 
+
     const result = await client.query({
       indexName,
       queryRequest: { vector, topK }
     });
+
     return result.matches || [];
   } catch (err) {
     logger.error(`Pinecone query error: ${err}`);
@@ -34,3 +38,4 @@ async function queryRelevant(text, topK = 5) {
 
 
 module.exports = { client, queryRelevant, embeddingModel };
+

@@ -38,7 +38,6 @@ This repository contains a minimal implementation of the **Shaka AI Chatbot**. I
 npm install
 ```
 
-
 2. *(Optional)* Create a Python virtual environment and install training dependencies:
 
 
@@ -69,6 +68,7 @@ node scripts/ingest.js
 
 5. (Optional) Fine‑tune the Llama model using the placeholder script (writes a dummy file to the `model/` directory):
 
+
 ```bash
 python3 scripts/train.py --data data/processed/corpus.jsonl --out model/
 ```
@@ -96,10 +96,12 @@ npm start
 
 The React UI is served from `client/` and is accessible in the browser at `http://localhost:3000` by default.
 
+
 ## Notes
 
 - `server/services/llm.js` contains a placeholder implementation for generating answers. Integrate your chosen local LLM here.
 - `server/services/tts.js` calls the ElevenLabs API and requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` environment variables.
+
 
 
 
