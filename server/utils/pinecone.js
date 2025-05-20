@@ -4,14 +4,21 @@ const logger = require('./logger');
 const client = new PineconeClient();
 client.init({
   apiKey: process.env.PINECONE_API_KEY || '',
-  environment: process.env.PINECONE_ENV || 'us-east1-gcp'
+  environment: process.env.PINECONE_ENV || 'us-east1-gcp',
+  host: process.env.PINECONE_HOST
+
 });
 
 const indexName = process.env.PINECONE_INDEX || 'shaka';
 
+async function embed(text) {
+  // Placeholder embedding function; replace with real model
+  return Array(1536).fill(0);
+}
+
 async function queryRelevant(text, topK = 5) {
-  // Placeholder embedding step - replace with your embedding function
-  const vector = Array(1536).fill(0); // dummy vector
+  const vector = await embed(text);
+
   try {
     const result = await client.query({
       indexName,
