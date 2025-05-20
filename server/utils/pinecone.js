@@ -6,6 +6,7 @@ client.init({
   apiKey: process.env.PINECONE_API_KEY || '',
   environment: process.env.PINECONE_ENV || 'us-east1-gcp',
   host: process.env.PINECONE_HOST
+
 });
 
 const indexName = process.env.PINECONE_INDEX || 'shaka';
@@ -25,5 +26,6 @@ async function queryRelevant(text, topK = 5) {
     return [];
   }
 }
+
 
 module.exports = { client, queryRelevant, embeddingModel };
