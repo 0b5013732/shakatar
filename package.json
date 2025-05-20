@@ -1,0 +1,19 @@
+{
+  "name": "shakatar",
+  "version": "1.0.0",
+  "description": "Shaka AI Chatbot MVP",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "client": "serve -s client",
+    "test": "echo \"No tests specified\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "winston": "^3.9.0",
+    "axios": "^1.6.8",
+    "@pinecone-database/pinecone": "^6.0.0",
+    "cors": "^2.8.5"
+  },
+  "type": "commonjs"
+}
