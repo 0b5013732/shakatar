@@ -48,11 +48,13 @@ pip install torch transformers
 3. Place Shaka Senghor's writings (txt/markdown) inside `data/corpus/`.
 4. Run the ingestion script to prepare the corpus:
 
+
 ```bash
 node scripts/ingest.js
 ```
 
 5. (Optional) Fine‑tune the Llama model using the placeholder script (writes a dummy file to the `model/` directory):
+
 
 ```bash
 python3 scripts/train.py --data data/processed/corpus.jsonl --out model/
@@ -70,7 +72,8 @@ ELEVENLABS_API_KEY=your_elevenlabs_key
 ELEVENLABS_VOICE_ID=your_voice_id
 ```
 
-7. Start the API server:
+7. Start the API server:er:
+
 
 ```bash
 npm start
@@ -82,8 +85,9 @@ The React UI is served from `client/` and is accessible in the browser at `http:
 
 - `server/services/llm.js` contains a placeholder implementation for generating answers. Integrate your chosen local LLM here.
 - `server/services/tts.js` calls the ElevenLabs API and requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` environment variables.
-- Pinecone configuration is handled in `server/utils/pinecone.js` via environment variables `PINECONE_API_KEY`, `PINECONE_ENV`, `PINECONE_INDEX`, `PINECONE_HOST`, and `PINECONE_EMBEDDING_MODEL`.
 
 The repository's `.gitignore` excludes `.env` so your credentials remain local.
+- Pinecone configuration is handled in `server/utils/pinecone.js` via environment variables `PINECONE_API_KEY`, `PINECONE_ENV`, and `PINECONE_INDEX`.
+
 
 This MVP is intended for private use on a local machine.

@@ -14,6 +14,7 @@ def main(data_path: str, model_dir: str):
     out_file.write_text("placeholder model")
 
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="../data/processed/corpus.jsonl")
