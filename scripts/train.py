@@ -10,7 +10,6 @@ def main(data_path: str, model_dir: str):
     # TODO: Implement fine-tuning using HuggingFace Transformers or similar.
     print(f"Training with {data_path}; output to {model_dir}")
 
-
     # Create a placeholder model file so the user sees output
     out_file = Path(model_dir) / "dummy-model.bin"
     out_file.write_text("placeholder model")
