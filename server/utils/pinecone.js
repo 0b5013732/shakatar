@@ -10,15 +10,11 @@ client.init({
 });
 
 const indexName = process.env.PINECONE_INDEX || 'shaka';
-
-async function embed(text) {
-  // Placeholder embedding function; replace with real model
-  return Array(1536).fill(0);
-}
+const embeddingModel = process.env.PINECONE_EMBEDDING_MODEL || 'text-embedding-3-large';
 
 async function queryRelevant(text, topK = 5) {
-  const vector = await embed(text);
-
+  // Placeholder embedding step - replace with your embedding function
+  const vector = Array(1536).fill(0); // dummy vector
   try {
     const result = await client.query({
       indexName,
@@ -31,4 +27,5 @@ async function queryRelevant(text, topK = 5) {
   }
 }
 
-module.exports = { client, queryRelevant };
+
+module.exports = { client, queryRelevant, embeddingModel };
