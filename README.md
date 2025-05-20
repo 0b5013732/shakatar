@@ -30,11 +30,13 @@ This repository contains a minimal implementation of the **Shaka AI Chatbot**. I
 ```
 
 ## Setup
+
 1. Install Node dependencies:
 
 ```bash
 npm install
 ```
+
 
 2. *(Optional)* Create a Python virtual environment and install training dependencies:
 
@@ -71,6 +73,7 @@ python3 scripts/train.py --data data/processed/corpus.jsonl --out model/
 
 
 
+
 6. Set environment variables for Pinecone and ElevenLabs in a `.env` file or your shell:
 
 ```bash
@@ -95,6 +98,7 @@ The React UI is served from `client/` and is accessible in the browser at `http:
 
 - `server/services/llm.js` contains a placeholder implementation for generating answers. Integrate your chosen local LLM here.
 - `server/services/tts.js` calls the ElevenLabs API and requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` environment variables.
+
 
 
 The repository's `.gitignore` excludes `.env` so your credentials remain local.
