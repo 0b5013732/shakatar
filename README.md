@@ -52,9 +52,8 @@ pip install torch transformers
 - `ELEVENLABS_API_KEY`
 - `ELEVENLABS_VOICE_ID`
 - `PINECONE_API_KEY`
-- `PINECONE_ENV`
+- `PINECONE_HOST` *(controller URL)*
 - `PINECONE_INDEX`
-- `PINECONE_HOST`
 - `PINECONE_EMBEDDING_MODEL`
 
 4. Place Shaka Senghor's writings (txt/markdown) inside `data/corpus/`.
@@ -80,7 +79,6 @@ python3 scripts/train.py --data data/processed/corpus.jsonl --out model/
 
 ```bash
 PINECONE_API_KEY=your_key
-PINECONE_ENV=your_env
 PINECONE_INDEX=shaka
 PINECONE_HOST=https://shakata-xvax471.svc.apw5-4e34-81fa.pinecone.io
 PINECONE_EMBEDDING_MODEL=text-embedding-3-large
@@ -107,6 +105,6 @@ The React UI is served from `client/` and is accessible in the browser at `http:
 
 
 The repository's `.gitignore` excludes `.env` so your credentials remain local.
-- Pinecone configuration is handled in `server/utils/pinecone.js` via environment variables `PINECONE_API_KEY`, `PINECONE_ENV`, and `PINECONE_INDEX`.
+- Pinecone configuration is handled in `server/utils/pinecone.js` via environment variables `PINECONE_API_KEY`, `PINECONE_HOST`, and `PINECONE_INDEX`.
 
 This MVP is intended for private use on a local machine.
