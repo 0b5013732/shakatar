@@ -1,7 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require('dotenv');
 const logger = require('./utils/logger');
+
+// Load environment variables from the repo root `.env` file, even if the server
+// is started from within the `server/` directory.
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+if (!process.env.PINECONE_API_KEY) {
+  logger.warn('PINECONE_API_KEY not set. Check your .env file.');
+}
 
 const chatRouter = require('./routes/chat');
 const audioRouter = require('./routes/audio');
