@@ -87,7 +87,9 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
 
 
 
-8. Set environment variables for Pinecone and ElevenLabs in a `.env` file or your shell:
+8. Create a `.env` file (a sample `.env.example` is provided) with your Pinecone
+   and ElevenLabs credentials. The server automatically loads this file at
+   startup:
 
 ```bash
 PINECONE_API_KEY=your_key
