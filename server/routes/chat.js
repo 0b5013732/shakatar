@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const llm = require('../services/llm');
-const { queryRelevant } = require('../utils/pinecone');
 const logger = require('../utils/logger');
 
 router.post('/', async (req, res) => {
   const { question } = req.body;
   try {
-    const context = await queryRelevant(question);
-    const answer = await llm.generateAnswer(question, context);
+    const answer = await llm.generateAnswer(question);
     logger.info(`Q: ${question}\nA: ${answer}`);
     res.json({ answer });
   } catch (err) {
