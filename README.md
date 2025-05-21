@@ -107,6 +107,7 @@ npm start
 ```
 
 The React UI is served from `client/` and is accessible in the browser at `http://localhost:3000` by default.
+The interface now features a sleeker design with styled message bubbles for a more modern look.
 
 
 ## Notes
