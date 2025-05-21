@@ -44,10 +44,21 @@ npm install
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch transformers
+pip install torch transformers datasets
 ```
 
-3. Set environment variables for ElevenLabs and Pinecone:
+3. Install an inference server to run Llama locally for query. The
+   [Ollama](https://ollama.ai) CLI provides a convenient API:
+
+```bash
+curl -fsSL https://ollama.ai/install.sh | sh
+ollama pull llama2  # or another base model
+ollama serve &      # serves at http://localhost:11434
+```
+
+The `LLAMA_ENDPOINT` variable defaults to this address.
+
+4. Set environment variables for ElevenLabs and Pinecone:
 
 - `ELEVENLABS_API_KEY`
 - `ELEVENLABS_VOICE_ID`
@@ -56,8 +67,8 @@ pip install torch transformers
 - `PINECONE_INDEX`
 - `PINECONE_EMBEDDING_MODEL`
 
-4. Place Shaka Senghor's writings (txt/markdown) inside `data/corpus/`.
-5. Run the ingestion script to prepare the corpus:
+5. Place Shaka Senghor's writings (txt/markdown) inside `data/corpus/`.
+6. Run the ingestion script to prepare the corpus:
 
 
 ```bash
@@ -65,7 +76,7 @@ node scripts/ingest.js
 ```
 
 
-5. (Optional) Fine‑tune the Llama model using the provided training script:
+7. (Optional) Fine‑tune the Llama model using the provided training script:
 
 
 ```bash
@@ -76,7 +87,7 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
 
 
 
-6. Set environment variables for Pinecone and ElevenLabs in a `.env` file or your shell:
+8. Set environment variables for Pinecone and ElevenLabs in a `.env` file or your shell:
 
 ```bash
 PINECONE_API_KEY=your_key
@@ -89,7 +100,7 @@ ELEVENLABS_API_KEY=your_elevenlabs_key
 ELEVENLABS_VOICE_ID=your_voice_id
 ```
 
-7. Start the API server:er:
+9. Start the API server:
 
 ```bash
 npm start
