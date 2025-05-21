@@ -1,5 +1,4 @@
 
-
 const { Pinecone } = require('@pinecone-database/pinecone');
 const logger = require('./logger');
 
@@ -23,6 +22,8 @@ async function queryRelevant(text, topK = 5) {
   // Placeholder embedding step - replace with your embedding function.
   const vector = Array(1536).fill(0); // dummy vector
   try {
+
+
     const result = await index.query({ vector, topK });
     return result.matches || [];
   } catch (err) {
@@ -32,5 +33,5 @@ async function queryRelevant(text, topK = 5) {
 }
 
 
-module.exports = { pinecone, index, queryRelevant, embeddingModel };
 
+module.exports = { pinecone, index, queryRelevant, embeddingModel };

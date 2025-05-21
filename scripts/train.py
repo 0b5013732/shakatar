@@ -56,6 +56,10 @@ def main(data_path: str, model_dir: str, base_model: str, epochs: int, batch_siz
     trainer.train()
     trainer.save_model(model_dir)
 
+    # Create a placeholder model file so the user sees output
+    out_file = Path(model_dir) / "dummy-model.bin"
+    out_file.write_text("placeholder model")>>>>>>> main
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
