@@ -25,7 +25,6 @@ This repository contains a minimal implementation of the **Shaka AI Chatbot**. I
 │   │   └── tts.js
 │   └── utils/
 │       ├── logger.js
-│       └── pinecone.js
 └── package.json
 ```
 
@@ -58,15 +57,10 @@ ollama serve &      # serves at http://localhost:11434
 
 The `LLAMA_ENDPOINT` variable defaults to this address.
 
-4. Set environment variables for ElevenLabs and Pinecone:
+4. Set environment variables for ElevenLabs:
 
 - `ELEVENLABS_API_KEY`
 - `ELEVENLABS_VOICE_ID`
-- `PINECONE_API_KEY`
-- `PINECONE_HOST` *(controller URL)*
-- `PINECONE_INDEX`
-- `PINECONE_EMBEDDING_MODEL`
-
 5. Place Shaka Senghor's writings (txt/markdown) inside `data/corpus/`.
 6. Run the ingestion script to prepare the corpus:
 
@@ -87,15 +81,9 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
 
 
 
-8. Create a `.env` file (a sample `.env.example` is provided) with your Pinecone
-   and ElevenLabs credentials. The server loads this file from the repository
-   root at startup, even if you launch the app from within the `server/` folder:
+8. Create a `.env` file (a sample `.env.example` is provided) with your Llama and ElevenLabs credentials. The server loads this file from the repository root at startup, even if you launch the app from within the `server/` folder:
 
 ```bash
-PINECONE_API_KEY=your_key
-PINECONE_INDEX=shaka
-PINECONE_HOST=https://shakata-xvax471.svc.apw5-4e34-81fa.pinecone.io
-PINECONE_EMBEDDING_MODEL=text-embedding-3-large
 LLAMA_ENDPOINT=http://localhost:11434/v1/chat/completions
 LLAMA_MODEL=llama3.2:1b  # change to your fine-tuned model name when ready
 ELEVENLABS_API_KEY=your_elevenlabs_key
@@ -122,6 +110,5 @@ The interface now features a sleeker design with styled message bubbles for a mo
 
 
 The repository's `.gitignore` excludes `.env` so your credentials remain local.
-- Pinecone configuration is handled in `server/utils/pinecone.js` via environment variables `PINECONE_API_KEY`, `PINECONE_HOST`, and `PINECONE_INDEX`.
 
 This MVP is intended for private use on a local machine.
