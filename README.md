@@ -1,6 +1,6 @@
 # Shaka AI Chatbot MVP
 
-This repository contains a minimal implementation of the **Shaka AI Chatbot**. It ingests text from a local directory, fine‑tunes a Llama‑based model (placeholder), and exposes a REST API with a simple React UI.
+This repository contains a minimal implementation of the **Shaka AI Chatbot**. It ingests text from a local directory, can fine‑tune a Llama‑based model, and exposes a REST API with a simple React UI.
 
 ## Project Structure
 
@@ -14,7 +14,7 @@ This repository contains a minimal implementation of the **Shaka AI Chatbot**. I
 ├── logs/                # Server logs
 ├── scripts/
 │   ├── ingest.js        # Corpus ingestion
-│   └── train.py         # Placeholder model training
+│   └── train.py         # Llama fine‑tuning script
 ├── server/
 │   ├── app.js           # Express server
 │   ├── routes/
@@ -65,11 +65,12 @@ node scripts/ingest.js
 ```
 
 
-5. (Optional) Fine‑tune the Llama model using the placeholder script (writes a dummy file to the `model/` directory):
+5. (Optional) Fine‑tune the Llama model using the provided training script:
 
 
 ```bash
-python3 scripts/train.py --data data/processed/corpus.jsonl --out model/
+python3 scripts/train.py --data data/processed/corpus.jsonl \
+    --out model/ --model path-or-name-of-base-llama
 ```
 
 
@@ -82,6 +83,8 @@ PINECONE_API_KEY=your_key
 PINECONE_INDEX=shaka
 PINECONE_HOST=https://shakata-xvax471.svc.apw5-4e34-81fa.pinecone.io
 PINECONE_EMBEDDING_MODEL=text-embedding-3-large
+LLAMA_ENDPOINT=http://localhost:11434/v1/chat/completions
+LLAMA_MODEL=shaka
 ELEVENLABS_API_KEY=your_elevenlabs_key
 ELEVENLABS_VOICE_ID=your_voice_id
 ```
@@ -97,7 +100,7 @@ The React UI is served from `client/` and is accessible in the browser at `http:
 
 ## Notes
 
-- `server/services/llm.js` contains a placeholder implementation for generating answers. Integrate your chosen local LLM here.
+- `server/services/llm.js` queries a local Llama model. Configure the `LLAMA_ENDPOINT` and `LLAMA_MODEL` environment variables to point at your running inference server.
 - `server/services/tts.js` calls the ElevenLabs API and requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` environment variables.
 
 
