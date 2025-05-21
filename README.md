@@ -52,7 +52,7 @@ pip install torch transformers datasets
 
 ```bash
 curl -fsSL https://ollama.ai/install.sh | sh
-ollama pull llama2  # or another base model
+ollama pull llama3.2:1b  # base model with 1B parameters
 ollama serve &      # serves at http://localhost:11434
 ```
 
@@ -81,7 +81,7 @@ node scripts/ingest.js
 
 ```bash
 python3 scripts/train.py --data data/processed/corpus.jsonl \
-    --out model/ --model path-or-name-of-base-llama
+    --out model/ --model llama3.2:1b
 ```
 
 
@@ -95,7 +95,7 @@ PINECONE_INDEX=shaka
 PINECONE_HOST=https://shakata-xvax471.svc.apw5-4e34-81fa.pinecone.io
 PINECONE_EMBEDDING_MODEL=text-embedding-3-large
 LLAMA_ENDPOINT=http://localhost:11434/v1/chat/completions
-LLAMA_MODEL=shaka
+LLAMA_MODEL=llama3.2:1b  # change to your fine-tuned model name when ready
 ELEVENLABS_API_KEY=your_elevenlabs_key
 ELEVENLABS_VOICE_ID=your_voice_id
 ```
@@ -111,7 +111,7 @@ The React UI is served from `client/` and is accessible in the browser at `http:
 
 ## Notes
 
-- `server/services/llm.js` queries a local Llama model. Configure the `LLAMA_ENDPOINT` and `LLAMA_MODEL` environment variables to point at your running inference server.
+- `server/services/llm.js` queries a local Llama model. Configure the `LLAMA_ENDPOINT` and `LLAMA_MODEL` environment variables to point at your running inference server.  `LLAMA_MODEL` defaults to `llama3.2:1b` but can be set to your fine-tuned model.
 - `server/services/tts.js` calls the ElevenLabs API and requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` environment variables.
 
 
