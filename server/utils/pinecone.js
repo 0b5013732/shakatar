@@ -9,8 +9,13 @@ const logger = require('./logger');
 // The latest Pinecone Node SDK expects only an apiKey and optional
 // controllerHostUrl when instantiating the client.  Passing legacy
 // `environment` or `host` properties results in a PineconeArgumentError.
+if (!process.env.PINECONE_API_KEY) {
+  logger.error('PINECONE_API_KEY is not defined');
+  throw new Error('Missing Pinecone configuration');
+}
+
 const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY || '',
+  apiKey: process.env.PINECONE_API_KEY,
   controllerHostUrl: process.env.PINECONE_HOST
 });
 
