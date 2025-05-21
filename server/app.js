@@ -1,7 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require('dotenv');
 const logger = require('./utils/logger');
+
+// Load environment variables from .env if present
+dotenv.config();
 
 const chatRouter = require('./routes/chat');
 const audioRouter = require('./routes/audio');
