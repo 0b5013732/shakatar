@@ -6,10 +6,12 @@ const logger = require('./logger');
 // Initialise the Pinecone client using the API key and environment from the
 // environment variables.  The `Pinecone` constructor is available in the
 // latest versions of the SDK and replaces the older `PineconeClient` class.
+// The latest Pinecone Node SDK expects only an apiKey and optional
+// controllerHostUrl when instantiating the client.  Passing legacy
+// `environment` or `host` properties results in a PineconeArgumentError.
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || '',
-  environment: process.env.PINECONE_ENV || 'us-east1-gcp',
-  host: process.env.PINECONE_HOST
+  controllerHostUrl: process.env.PINECONE_HOST
 });
 
 const indexName = process.env.PINECONE_INDEX || 'shaka';
