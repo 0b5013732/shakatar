@@ -21,12 +21,18 @@ function Chat() {
   return (
     <div id="chat">
       {messages.map((m, i) => (
-        <div key={i} className="msg">
-          <span className={m.role}>{m.role === 'user' ? 'You' : 'Shaka'}:</span> {m.text}
+        <div key={i} className={`msg ${m.role}`}>
+          <span>{m.text}</span>
         </div>
       ))}
-      <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()} />
-      <button onClick={sendMessage}>Send</button>
+      <div className="input-row">
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && sendMessage()}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
     </div>
   );
 }
