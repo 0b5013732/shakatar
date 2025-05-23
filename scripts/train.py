@@ -13,6 +13,7 @@ python3 train.py --data data/processed/corpus.jsonl --out model/ \
 
 import argparse
 from pathlib import Path
+import torch
 
 from datasets import load_dataset
 from transformers import (
@@ -25,7 +26,11 @@ from transformers import (
 
 
 def main(data_path: str, model_dir: str, base_model: str, epochs: int, batch_size: int):
-    print(f"Training with {data_path}; base model {base_model}; output to {model_dir}")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(
+        f"Training with {data_path}; base model {base_model}; output to {model_dir}"
+    )
+    print(f"Detected device: {device}")
 
     dataset = load_dataset("json", data_files=data_path)["train"]
 
@@ -34,6 +39,7 @@ def main(data_path: str, model_dir: str, base_model: str, epochs: int, batch_siz
         tokenizer.pad_token = tokenizer.eos_token
 
     model = AutoModelForCausalLM.from_pretrained(base_model)
+    model.to(device)
 
     def tokenize(batch):
         return tokenizer(batch["text"], truncation=True, padding="max_length")
@@ -41,6 +47,8 @@ def main(data_path: str, model_dir: str, base_model: str, epochs: int, batch_siz
     tokenized = dataset.map(tokenize, batched=True, remove_columns=["text"])
 
     collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+
+    fp16 = torch.cuda.is_available()
 
     args = TrainingArguments(
         output_dir=model_dir,
@@ -50,6 +58,7 @@ def main(data_path: str, model_dir: str, base_model: str, epochs: int, batch_siz
         logging_steps=10,
         save_steps=1000,
         save_total_limit=2,
+        fp16=fp16,
     )
 
     trainer = Trainer(model=model, args=args, train_dataset=tokenized, data_collator=collator)
