@@ -8,14 +8,13 @@
     "client": "serve -s client",
     "test": "echo \"No tests specified\"",
     "update": "git pull --rebase"
-
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "winston": "^3.9.0",
     "axios": "^1.6.8",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.5.0",
+    "express": "^4.18.2",
+    "winston": "^3.9.0"
   },
   "type": "commonjs"
 }
