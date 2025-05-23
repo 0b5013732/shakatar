@@ -78,6 +78,9 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
     --out model/ --model llama3.2:1b
 ```
 
+The training script will automatically detect whether CUDA is available and, if
+so, enable mixed precision to accelerate training on your GPU.
+
 
 
 
