@@ -52,11 +52,24 @@ def main(
 
     dataset = load_dataset("json", data_files=data_path)["train"]
 
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
+    sanitized = base_model
+    if ":" in base_model:
+        alt = base_model.replace(":", "-")
+        if Path(base_model).exists():
+            sanitized = base_model
+        elif Path(alt).exists():
+            sanitized = alt
+        else:
+            raise ValueError(
+                "Model names containing ':' are not valid HuggingFace IDs. "
+                "Please provide a path to a local model directory or a valid repo ID."
+            )
+
+    tokenizer = AutoTokenizer.from_pretrained(sanitized)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(base_model)
+    model = AutoModelForCausalLM.from_pretrained(sanitized)
     model.to(device)
 
     def tokenize(batch):

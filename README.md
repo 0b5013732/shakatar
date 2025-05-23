@@ -70,12 +70,15 @@ node scripts/ingest.js
 ```
 
 
-7. (Optional) Fine‑tune the Llama model using the provided training script:
-
+7. (Optional) Fine‑tune the Llama model using the provided training script. The
+   `--model` flag expects either a HuggingFace model repo or the path to a
+   local directory containing the model weights. If you downloaded
+   `llama3.2:1b` via the Ollama CLI, export it to a folder first and pass that
+   path instead:
 
 ```bash
 python3 scripts/train.py --data data/processed/corpus.jsonl \
-    --out model/ --model llama3.2:1b
+    --out model/ --model ./models/llama3.2-1b
 ```
 
 For multi-GPU machines, launch via `torchrun` so each process is assigned a
@@ -84,7 +87,7 @@ different GPU:
 ```bash
 CUDA_VISIBLE_DEVICES=0,1 torchrun --standalone --nproc_per_node=2 \
   scripts/train.py --data data/processed/corpus.jsonl \
-  --out model/ --model llama3.2:1b
+  --out model/ --model ./models/llama3.2-1b
 ```
 
 The training script will automatically detect whether CUDA is available and, if
