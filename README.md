@@ -78,6 +78,15 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
     --out model/ --model llama3.2:1b
 ```
 
+For multi-GPU machines, launch via `torchrun` so each process is assigned a
+different GPU:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1 torchrun --standalone --nproc_per_node=2 \
+  scripts/train.py --data data/processed/corpus.jsonl \
+  --out model/ --model llama3.2:1b
+```
+
 The training script will automatically detect whether CUDA is available and, if
 so, enable mixed precision to accelerate training on your GPU.
 
