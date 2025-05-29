@@ -26,6 +26,25 @@ from transformers import (
 )
 
 
+def get_device(local_rank: int) -> str:
+    """Return the CUDA device string for the given rank.
+
+    Raises ``RuntimeError`` if the requested ``local_rank`` exceeds the number
+    of available GPUs when CUDA is enabled. When ``local_rank`` is ``-1`` the
+    first CUDA device is used if available, otherwise ``cpu`` is returned.
+    """
+    if local_rank >= 0:
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is not available but distributed training was requested")
+        device_count = torch.cuda.device_count()
+        if local_rank >= device_count:
+            raise RuntimeError(
+                f"Invalid local_rank {local_rank}; only {device_count} CUDA device(s) present"
+            )
+        return f"cuda:{local_rank}"
+    return "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def main(
     data_path: str,
     model_dir: str,
@@ -41,10 +60,7 @@ def main(
     default) the script behaves as before and simply picks ``cuda`` if
     available.
     """
-    if local_rank >= 0 and torch.cuda.is_available():
-        device = f"cuda:{local_rank}"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = get_device(local_rank)
     print(
         f"Training with {data_path}; base model {base_model}; output to {model_dir}"
     )
