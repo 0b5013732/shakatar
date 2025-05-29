@@ -44,6 +44,30 @@ def select_device(local_rank: int) -> str:
     return "cuda" if torch.cuda.is_available() else "cpu"
 
 
+def resolve_model_path(base_model: str) -> str:
+    """Return a path or model name usable by HuggingFace APIs.
+
+    Names from the Ollama CLI can include ``:`` which is not accepted by
+    HuggingFace.  If ``base_model`` contains ``:`` and the direct path does not
+    exist, the function also checks for a sibling path where ``:`` is replaced
+    with ``-``.  A ``ValueError`` is raised if neither exists.
+    """
+
+    sanitized = base_model
+    if ":" in base_model:
+        alt = base_model.replace(":", "-")
+        if Path(base_model).exists():
+            sanitized = base_model
+        elif Path(alt).exists():
+            sanitized = alt
+        else:
+            raise ValueError(
+                "Model names containing ':' are not valid HuggingFace IDs. "
+                "Please provide a path to a local model directory or a valid repo ID."
+            )
+    return sanitized
+
+
 def main(
     data_path: str,
     model_dir: str,
@@ -68,18 +92,7 @@ def main(
 
     dataset = load_dataset("json", data_files=data_path)["train"]
 
-    sanitized = base_model
-    if ":" in base_model:
-        alt = base_model.replace(":", "-")
-        if Path(base_model).exists():
-            sanitized = base_model
-        elif Path(alt).exists():
-            sanitized = alt
-        else:
-            raise ValueError(
-                "Model names containing ':' are not valid HuggingFace IDs. "
-                "Please provide a path to a local model directory or a valid repo ID."
-            )
+    sanitized = resolve_model_path(base_model)
 
     tokenizer = AutoTokenizer.from_pretrained(sanitized)
     if tokenizer.pad_token is None:
