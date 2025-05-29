@@ -30,22 +30,22 @@ with mock.patch.dict(sys.modules, {
 class DeviceSelectionTest(unittest.TestCase):
     def test_cpu_no_cuda(self):
         with mock.patch.object(train.torch.cuda, 'is_available', return_value=False):
-            self.assertEqual(train.get_device(-1), 'cpu')
+            self.assertEqual(train.select_device(-1), 'cpu')
 
     def test_default_cuda(self):
         with mock.patch.object(train.torch.cuda, 'is_available', return_value=True):
-            self.assertEqual(train.get_device(-1), 'cuda')
+            self.assertEqual(train.select_device(-1), 'cuda')
 
     def test_rank_zero(self):
         with mock.patch.object(train.torch.cuda, 'is_available', return_value=True), \
              mock.patch.object(train.torch.cuda, 'device_count', return_value=2):
-            self.assertEqual(train.get_device(0), 'cuda:0')
+            self.assertEqual(train.select_device(0), 'cuda:0')
 
     def test_rank_invalid(self):
         with mock.patch.object(train.torch.cuda, 'is_available', return_value=True), \
              mock.patch.object(train.torch.cuda, 'device_count', return_value=1):
-            with self.assertRaises(RuntimeError):
-                train.get_device(1)
+            with self.assertRaises(ValueError):
+                train.select_device(1)
 
 
 if __name__ == '__main__':
