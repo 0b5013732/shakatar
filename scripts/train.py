@@ -75,6 +75,7 @@ def main(
     epochs: int,
     batch_size: int,
     local_rank: int,
+    gradient_checkpointing: bool = False,
 ):
     """Run the fine-tuning loop.
 
@@ -120,6 +121,7 @@ def main(
         save_total_limit=2,
         fp16=fp16,
         local_rank=local_rank,
+        gradient_checkpointing=gradient_checkpointing,
     )
 
     trainer = Trainer(model=model, args=args, train_dataset=tokenized, data_collator=collator)
@@ -137,6 +139,11 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument(
+        "--gradient-checkpointing",
+        action="store_true",
+        help="Enable gradient checkpointing to reduce memory use",
+    )
+    parser.add_argument(
         "--local_rank",
         type=int,
         default=int(os.environ.get("LOCAL_RANK", -1)),
@@ -152,4 +159,5 @@ if __name__ == "__main__":
         args.epochs,
         args.batch_size,
         args.local_rank,
+        args.gradient_checkpointing,
     )
