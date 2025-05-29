@@ -34,23 +34,24 @@ if "transformers" not in sys.modules:
         setattr(transformers_stub, attr, object)
     sys.modules["transformers"] = transformers_stub
 
-train = importlib.import_module("scripts.train")
-select_device = train.select_device
 
 
 def test_select_device_valid_gpu(monkeypatch):
     monkeypatch.setattr("torch.cuda.is_available", lambda: True)
     monkeypatch.setattr("torch.cuda.device_count", lambda: 2)
-    assert select_device(1) == "cuda:1"
+    train = importlib.reload(importlib.import_module("scripts.train"))
+    assert train.select_device(1) == "cuda:1"
 
 
 def test_select_device_invalid_rank(monkeypatch):
     monkeypatch.setattr("torch.cuda.is_available", lambda: True)
     monkeypatch.setattr("torch.cuda.device_count", lambda: 1)
+    train = importlib.reload(importlib.import_module("scripts.train"))
     with pytest.raises(ValueError):
-        select_device(1)
+        train.select_device(1)
 
 
 def test_select_device_cpu(monkeypatch):
     monkeypatch.setattr("torch.cuda.is_available", lambda: False)
-    assert select_device(-1) == "cpu"
+    train = importlib.reload(importlib.import_module("scripts.train"))
+    assert train.select_device(-1) == "cpu"

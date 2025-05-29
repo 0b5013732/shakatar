@@ -76,6 +76,7 @@ def main(
     batch_size: int,
     local_rank: int,
     gradient_checkpointing: bool = False,
+    bits: int = 16,
 ):
     """Run the fine-tuning loop.
 
@@ -99,8 +100,17 @@ def main(
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(sanitized)
-    model.to(device)
+    model_kwargs = {}
+    if bits == 8:
+        model_kwargs["load_in_8bit"] = True
+        model_kwargs["device_map"] = "auto"
+    elif bits == 4:
+        model_kwargs["load_in_4bit"] = True
+        model_kwargs["device_map"] = "auto"
+
+    model = AutoModelForCausalLM.from_pretrained(sanitized, **model_kwargs)
+    if bits == 16:
+        model.to(device)
 
     def tokenize(batch):
         return tokenizer(batch["text"], truncation=True, padding="max_length")
@@ -144,6 +154,13 @@ if __name__ == "__main__":
         help="Enable gradient checkpointing to reduce memory use",
     )
     parser.add_argument(
+        "--bits",
+        type=int,
+        choices=[4, 8, 16],
+        default=16,
+        help="Load model in 4-bit or 8-bit precision (requires bitsandbytes)",
+    )
+    parser.add_argument(
         "--local_rank",
         type=int,
         default=int(os.environ.get("LOCAL_RANK", -1)),
@@ -160,4 +177,5 @@ if __name__ == "__main__":
         args.batch_size,
         args.local_rank,
         args.gradient_checkpointing,
+        args.bits,
     )
