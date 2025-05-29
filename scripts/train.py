@@ -26,6 +26,24 @@ from transformers import (
 )
 
 
+def select_device(local_rank: int) -> str:
+    """Return a torch device string for ``local_rank``.
+
+    Raises ``ValueError`` if ``local_rank`` points to a GPU that does not
+    exist in the current environment.
+    """
+
+    if local_rank >= 0 and torch.cuda.is_available():
+        count = torch.cuda.device_count()
+        if local_rank >= count:
+            raise ValueError(
+                f"Invalid device index {local_rank}; only {count} GPU(s) available."
+            )
+        return f"cuda:{local_rank}"
+
+    return "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def main(
     data_path: str,
     model_dir: str,
@@ -41,10 +59,7 @@ def main(
     default) the script behaves as before and simply picks ``cuda`` if
     available.
     """
-    if local_rank >= 0 and torch.cuda.is_available():
-        device = f"cuda:{local_rank}"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = select_device(local_rank)
     print(
         f"Training with {data_path}; base model {base_model}; output to {model_dir}"
     )
