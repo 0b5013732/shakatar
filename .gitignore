@@ -5,3 +5,4 @@ model/
 .env
 package-lock.json
 
+__pycache__/
