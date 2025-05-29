@@ -60,6 +60,7 @@ def main(
     available.
     """
     device = select_device(local_rank)
+
     print(
         f"Training with {data_path}; base model {base_model}; output to {model_dir}"
     )
