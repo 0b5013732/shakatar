@@ -91,9 +91,28 @@ CUDA_VISIBLE_DEVICES=0,1 torchrun --standalone --nproc_per_node=2 \
 ```
 
 The training script will automatically detect whether CUDA is available and, if
-so, enable mixed precision to accelerate training on your GPU.
+so, enable mixed precision to accelerate training on yourGPU.
 
+### Troubleshooting CUDA Out of Memory Errors
 
+If you encounter CUDA Out-of-Memory (OOM) errors during training, here are a couple of common strategies to mitigate them:
+
+1.  **Use 8-bit Quantization:**
+    Running the training with 8-bit quantization can significantly reduce GPU memory footprint. Use the `--bits 8` flag with the training script:
+    ```bash
+    torchrun --standalone --nproc_per_node=1 scripts/train.py --data <your_data> --out <your_model_dir> --model <your_base_model> --bits 8
+    ```
+    Replace `<your_data>`, `<your_model_dir>`, and `<your_base_model>` with your specific paths and model names.
+
+2.  **Configure PyTorch CUDA Allocator:**
+    Setting the `PYTORCH_CUDA_ALLOC_CONF` environment variable can help manage memory allocation more effectively and prevent fragmentation. Export this variable before running your training script:
+    ```bash
+    export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+    # Then run your training command, for example:
+    torchrun --standalone --nproc_per_node=1 scripts/train.py --data <your_data> --out <your_model_dir> --model <your_base_model>
+    ```
+
+These techniques can help you train larger models or use larger batch sizes on memory-constrained GPUs.
 
 
 8. Create a `.env` file (a sample `.env.example` is provided) with your Llama and ElevenLabs credentials. The server loads this file from the repository root at startup, even if you launch the app from within the `server/` folder:
