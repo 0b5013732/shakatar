@@ -107,9 +107,11 @@ def main(
     elif bits == 4:
         model_kwargs["load_in_4bit"] = True
         model_kwargs["device_map"] = "auto"
+    elif bits == 16 and torch.cuda.is_available() and torch.cuda.device_count() > 1:
+        model_kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(sanitized, **model_kwargs)
-    if bits == 16:
+    if bits == 16 and "device_map" not in model_kwargs:
         model.to(device)
 
     def tokenize(batch):
