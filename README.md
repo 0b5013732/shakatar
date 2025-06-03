@@ -88,7 +88,7 @@ python3 scripts/train.py --data data/processed/corpus.jsonl \
 # If you encounter CUDA OutOfMemory errors, try the following command which enables
 # 4-bit quantization, gradient checkpointing, and a batch size of 1
 # to significantly reduce memory usage:
-PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True CUDA_VISIBLE_DEVICES=0,1   torchrun --standalone --nproc_per_node=1 scripts/train.py   --data data/processed/corpus.jsonl --out model/   --model meta-llama/Llama-3.2-1B   --batch-size 1 --gradient-checkpointing --bits 4
+CUDA_VISIBLE_DEVICES=0,1   torchrun --standalone --nproc_per_node=1 scripts/train.py   --data data/processed/corpus.jsonl --out model/   --model meta-llama/Llama-3.2-1B   --batch-size 1 --gradient-checkpointing --bits 4 --gradient-accumulation-steps 1
 ```
 
 The training script will automatically detect whether CUDA is available and, if
