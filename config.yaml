@@ -1,0 +1,18 @@
+base_model: meta-llama/Llama-2-7b-hf
+model_type: LlamaForCausalLM
+load_in_4bit: true
+adapter: qlora
+
+dataset:
+  path: ./data/processed/formatted_dataset.txt
+  type: text
+
+training:
+  output_dir: ./output
+  per_device_train_batch_size: 4
+  num_train_epochs: 3
+  learning_rate: 2e-5
+  logging_steps: 10
+  save_strategy: epoch
+  bf16: true # Note: Requires GPU with bf16 support. Change to false or remove if not supported.
+  gradient_checkpointing: true

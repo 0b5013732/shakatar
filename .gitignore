@@ -6,3 +6,22 @@ model/
 package-lock.json
 
 __pycache__/
+
+# LLaMA Fine-tuning specific ignores
+
+# Ignore raw text files in the corpus directory
+data/corpus/**/*.txt
+data/corpus/*.txt
+
+# Ignore the processed dataset file
+data/processed/formatted_dataset.txt
+
+# Ignore model outputs and checkpoints
+output/
+
+# Keep .gitkeep files if they are in ignored directories
+# data/ and logs/ are not broadly ignored in a way that hides .gitkeep by default,
+# but these lines add explicitness or would be needed if data/* or logs/* were added.
+!data/corpus/.gitkeep
+!data/processed/.gitkeep
+# !logs/.gitkeep is already effectively present due to 'logs/*' and '!logs/.gitkeep' above.
