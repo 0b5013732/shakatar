@@ -105,34 +105,41 @@ def main(
     model_kwargs = {}
     if bits == 8:
         model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_8bit=True)
-        model_kwargs["device_map"] = "auto"
+        if torch.cuda.is_available() and torch.cuda.device_count() > 1:
+            model_kwargs["device_map"] = "auto"
     elif bits == 4:
         model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
-        model_kwargs["device_map"] = "auto"
+        if torch.cuda.is_available() and torch.cuda.device_count() > 1:
+            model_kwargs["device_map"] = "auto"
     elif bits == 16 and torch.cuda.is_available() and torch.cuda.device_count() > 1:
         model_kwargs["device_map"] = "auto"
 
     model = AutoModelForCausalLM.from_pretrained(sanitized, **model_kwargs)
 
+    # If not using device_map (e.g., single GPU), move the base model to the target device BEFORE PEFT.
+    # This is important for BitsAndBytesConfig to work correctly.
+    if "device_map" not in model_kwargs:
+        model.to(device)
+
+    # Apply PEFT if bits is 4 or 8
     if bits == 4 or bits == 8:
-        # For Llama-like models, targeting q_proj and v_proj is common.
-        # You might need to adjust target_modules based on the specific model architecture
-        # if this doesn't work. It's also possible to try to find all Linear layers.
-        # For now, let's assume a common setup for Llama models.
-        # A more robust way could be to inspect model.named_modules()
-        # but that's more complex for a subtask.
         peft_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
             inference_mode=False,
-            r=8, # Rank
-            lora_alpha=32, # Alpha scaling
+            r=8,  # Rank
+            lora_alpha=32,  # Alpha scaling
             lora_dropout=0.1,
-            target_modules=["q_proj", "v_proj"] # Common for Llama
+            target_modules=["q_proj", "v_proj"]  # Common for Llama
         )
+        # Ensure model is on the correct device before applying PEFT,
+        # especially if it was loaded on CPU then moved.
+        # For BitsAndBytes, the model should already be on the device from the previous model.to(device)
+        # or from device_map.
         model = get_peft_model(model, peft_config)
-        model.print_trainable_parameters() # Optional: to see the effect of PEFT
-    elif bits == 16 and "device_map" not in model_kwargs:
-        model.to(device)
+        model.print_trainable_parameters()  # Optional: to see the effect of PEFT
+
+    # No final model.to(device) needed here, as the model (base or PEFT)
+    # should already be on the correct device from the previous .to(device) call or device_map.
 
     def tokenize(batch):
         return tokenizer(batch["text"], truncation=True, padding="max_length")
