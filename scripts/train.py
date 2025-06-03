@@ -79,6 +79,7 @@ def main(
     gradient_checkpointing: bool = False,
     bits: int = 16,
     gradient_accumulation_steps: int = 1, # New parameter
+    max_seq_length: int,
 ):
     """Run the fine-tuning loop.
 
@@ -142,7 +143,7 @@ def main(
     # should already be on the correct device from the previous .to(device) call or device_map.
 
     def tokenize(batch):
-        return tokenizer(batch["text"], truncation=True, padding="max_length")
+        return tokenizer(batch["text"], truncation=True, padding="max_length", max_length=max_seq_length)
 
     tokenized = dataset.map(tokenize, batched=True, remove_columns=["text"])
 
@@ -202,6 +203,7 @@ if __name__ == "__main__":
         default=1,
         help="Number of steps to accumulate gradients before performing an optimizer step",
     )
+    parser.add_argument("--max_seq_length", type=int, default=512, help="Maximum sequence length for tokenization.")
     args = parser.parse_args()
 
     Path(args.out).mkdir(parents=True, exist_ok=True)
@@ -215,4 +217,5 @@ if __name__ == "__main__":
         args.gradient_checkpointing,
         args.bits,
         args.gradient_accumulation_steps, # Pass new argument
+        args.max_seq_length,
     )
