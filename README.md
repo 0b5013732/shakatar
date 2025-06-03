@@ -43,8 +43,11 @@ npm install
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch transformers datasets
+pip install torch transformers datasets peft bitsandbytes accelerate
 ```
+   - `peft`: For Parameter-Efficient Fine-Tuning.
+   - `bitsandbytes`: Required if you plan to use 4-bit or 8-bit model quantization (via the `--bits` flag in `train.py`).
+   - `accelerate`: Helps manage and run your models efficiently, especially for distributed setups or when using features like `device_map="auto"`.
 
 3. Install an inference server to run Llama locally for query. The
    [Ollama](https://ollama.ai) CLI provides a convenient API:
