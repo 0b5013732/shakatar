@@ -78,6 +78,7 @@ def main(
     local_rank: int,
     gradient_checkpointing: bool = False,
     bits: int = 16,
+    gradient_accumulation_steps: int = 1, # New parameter
 ):
     """Run the fine-tuning loop.
 
@@ -153,6 +154,7 @@ def main(
         fp16=fp16,
         local_rank=local_rank,
         gradient_checkpointing=gradient_checkpointing,
+        gradient_accumulation_steps=gradient_accumulation_steps, # New argument
     )
 
     trainer = Trainer(model=model, args=args, train_dataset=tokenized, data_collator=collator)
@@ -187,6 +189,12 @@ if __name__ == "__main__":
         default=int(os.environ.get("LOCAL_RANK", -1)),
         help="Provided by torchrun for distributed training",
     )
+    parser.add_argument(
+        "--gradient-accumulation-steps",
+        type=int,
+        default=1,
+        help="Number of steps to accumulate gradients before performing an optimizer step",
+    )
     args = parser.parse_args()
 
     Path(args.out).mkdir(parents=True, exist_ok=True)
@@ -199,4 +207,5 @@ if __name__ == "__main__":
         args.local_rank,
         args.gradient_checkpointing,
         args.bits,
+        args.gradient_accumulation_steps, # Pass new argument
     )
