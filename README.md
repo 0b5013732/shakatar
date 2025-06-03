@@ -128,3 +128,107 @@ The interface now features a sleeker design with styled message bubbles for a mo
 The repository's `.gitignore` excludes `.env` so your credentials remain local.
 
 This MVP is intended for private use on a local machine.
+
+# LLaMA Fine-Tuning on Author Text Files
+
+This project provides scripts and configuration to fine-tune a LLaMA model (e.g., `meta-llama/Llama-2-7b-hf`) on a custom corpus of an author's text files. It uses QLoRA for efficient fine-tuning via the Axolotl framework.
+
+## Directory Structure
+
+- `config.yaml`: Axolotl configuration file for fine-tuning.
+- `data/`:
+    - `corpus/`: Place your raw author text files (`.txt`) here. You can create subdirectories.
+        - `.gitkeep`: Placeholder, safe to remove if you add your own data.
+    - `processed/`: Output directory for the formatted dataset.
+        - `formatted_dataset.txt`: The chunked and formatted text data for training.
+        - `.gitkeep`: Placeholder.
+- `scripts/`:
+    - `chunk_text.py`: Python script to process raw text files into a formatted dataset.
+    - `run_finetuning.sh`: Shell script to start the Axolotl fine-tuning process.
+    - `test_model.py`: Python script to load and test the fine-tuned model.
+- `output/`: Default directory where Axolotl saves the fine-tuned model checkpoints and artifacts. (This directory will be created when you run the fine-tuning).
+
+## Requirements
+
+- Python 3.8+
+- PyTorch (with CUDA support for GPU training)
+- Hugging Face Transformers, Datasets, Accelerate, PEFT, BitsAndBytes
+- Axolotl: Follow the [official Axolotl installation guide](https://github.com/OpenAccess-AI-Collective/axolotl#installation) to install Axolotl and its dependencies.
+- Git LFS (for handling large model files, if you version them)
+
+You can often install Python dependencies with:
+```bash
+pip install torch transformers datasets accelerate peft bitsandbytes sentencepiece
+# For Axolotl, refer to its specific installation instructions.
+```
+
+## Fine-Tuning Process
+
+### 1. Prepare Your Data
+
+1.  **Gather Text Files**: Collect plain text (`.txt`) files of the author's writing.
+2.  **Place Files**: Put these `.txt` files into the `data/corpus/` directory. You can organize them in subfolders if desired.
+    Example:
+    ```
+    data/corpus/book1.txt
+    data/corpus/short_stories/story1.txt
+    data/corpus/short_stories/story2.txt
+    ```
+
+### 2. Chunk and Format Text
+
+Run the `chunk_text.py` script to process your raw text files into the required format for training. This script will clean the text, chunk it into manageable pieces, and format each chunk with `<s>...</s>`.
+
+```bash
+python scripts/chunk_text.py
+```
+
+This will generate `data/processed/formatted_dataset.txt`.
+
+### 3. Configure Fine-Tuning (Optional)
+
+The default fine-tuning parameters are set in `config.yaml`. You can modify this file to change:
+- `base_model`: If you want to use a different LLaMA model.
+- `dataset.path`: If your formatted dataset is named or located differently.
+- `training.*`: Parameters like `num_train_epochs`, `learning_rate`, `per_device_train_batch_size`, etc.
+- `bf16`: Set to `false` if your GPU does not support bfloat16.
+
+**Note on GPU requirements**: QLoRA significantly reduces memory usage, but fine-tuning LLMs is still demanding. The default `meta-llama/Llama-2-7b-hf` model with 4-bit quantization should be trainable on GPUs with >=16GB VRAM, but this can vary. If you encounter out-of-memory errors, try reducing `per_device_train_batch_size` or using a smaller model.
+
+### 4. Run Fine-Tuning
+
+Execute the `run_finetuning.sh` script to start the Axolotl fine-tuning process. Make sure you are in the root directory of the project.
+
+```bash
+bash scripts/run_finetuning.sh
+```
+
+This will:
+- Use the `config.yaml` for settings.
+- Read the dataset from `data/processed/formatted_dataset.txt`.
+- Save model checkpoints and the final model to the `./output/` directory (or as specified in `config.yaml`).
+
+The process can take a significant amount of time depending on your dataset size, hardware, and training epochs.
+
+### 5. Test Your Fine-Tuned Model
+
+Once fine-tuning is complete, you can test your model using `scripts/test_model.py`.
+
+By default, it looks for the model in the `./output/` directory. If Axolotl saved multiple checkpoints, the script will try to load the latest one. You can also point it to a specific checkpoint directory.
+
+```bash
+# Test with default settings (loads from ./output, uses a default prompt)
+python scripts/test_model.py
+
+# Specify a model path and initial prompt
+python scripts/test_model.py --model_path ./output/your_specific_checkpoint_or_merged_model_dir --prompt "<s>Write a sentence in the style of the author</s>"
+
+# For more options:
+python scripts/test_model.py --help
+```
+
+The script will load the model and enter an interactive mode where you can type prompts and see the generated text.
+
+## Notes
+- **Dataset Size**: For effective style learning, a dataset of 5,000–50,000 chunks (roughly 100k–1M words after cleaning and chunking) is recommended.
+- **Cleaning**: The `chunk_text.py` script includes basic cleaning. You may need to enhance the `clean_text` function within it for specific metadata or formatting issues in your source texts.
