@@ -67,3 +67,19 @@ def test_load_in_4bit(tmp_path):
         train.main("data", str(tmp_path), "model", 1, 1, -1, False, 4)
         assert called.get("load_in_4bit") is True
     sys.modules.pop("scripts.train", None)
+
+
+def test_bitsandbytes_importable():
+    try:
+        import bitsandbytes
+        # If the import succeeds, the test passes.
+        # You could add an assertion here like assert True, but it's implicit.
+    except ImportError:
+        # If bitsandbytes is not installed, an ImportError will be raised.
+        # We re-raise an AssertionError to make the test failure more explicit
+        # about the missing dependency.
+        raise AssertionError(
+            "The 'bitsandbytes' library is not installed, but it is required when "
+            "using 4-bit or 8-bit quantization options (e.g., --bits 4 or --bits 8). "
+            "Please install it by running 'pip install bitsandbytes'."
+        )
