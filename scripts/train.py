@@ -79,7 +79,7 @@ def main(
     gradient_checkpointing: bool = False,
     bits: int = 16,
     gradient_accumulation_steps: int = 1, # New parameter
-    max_seq_length: int,
+    max_seq_length: int = 512, # Added default value here
 ):
     """Run the fine-tuning loop.
 
