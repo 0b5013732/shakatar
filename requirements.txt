@@ -2,3 +2,5 @@ transformers
 bitsandbytes
 torch
 datasets
+peft
+trl
