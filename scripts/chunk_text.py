@@ -3,7 +3,7 @@ from pathlib import Path
 from transformers import AutoTokenizer
 
 # Initialize tokenizer
-tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
 
 # Define configurable variables
 max_tokens = 512
@@ -39,6 +39,7 @@ def chunk_text(text, tokenizer, max_tokens, stride):
         truncation=True,
         max_length=max_tokens,
         stride=stride,
+        padding="longest",
         return_tensors="pt"
     )
     # Decode tokenized chunks back into text
