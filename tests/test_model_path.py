@@ -9,27 +9,31 @@ import unittest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Minimal stubs for optional dependencies to avoid heavy imports
-if "torch" not in sys.modules:
-    torch_stub = types.SimpleNamespace()
-    torch_stub.cuda = types.SimpleNamespace(is_available=lambda: False, device_count=lambda: 0)
-    sys.modules["torch"] = torch_stub
+torch_stub = types.SimpleNamespace()
+torch_stub.cuda = types.SimpleNamespace(is_available=lambda: False, device_count=lambda: 0)
+sys.modules["torch"] = torch_stub
 
-if "datasets" not in sys.modules:
-    datasets_stub = types.ModuleType("datasets")
-    datasets_stub.load_dataset = lambda *_, **__: None
-    sys.modules["datasets"] = datasets_stub
+datasets_stub = types.ModuleType("datasets")
+datasets_stub.load_dataset = lambda *_, **__: None
+sys.modules["datasets"] = datasets_stub
 
-if "transformers" not in sys.modules:
-    transformers_stub = types.ModuleType("transformers")
-    for attr in [
-        "AutoTokenizer",
-        "AutoModelForCausalLM",
-        "DataCollatorForLanguageModeling",
-        "Trainer",
-        "TrainingArguments",
-    ]:
-        setattr(transformers_stub, attr, object)
-    sys.modules["transformers"] = transformers_stub
+transformers_stub = types.ModuleType("transformers")
+for attr in [
+    "AutoTokenizer",
+    "AutoModelForCausalLM",
+    "BitsAndBytesConfig",
+    "DataCollatorForLanguageModeling",
+    "Trainer",
+    "TrainingArguments",
+]:
+    setattr(transformers_stub, attr, object)
+sys.modules["transformers"] = transformers_stub
+
+peft_stub = types.ModuleType("peft")
+peft_stub.get_peft_model = lambda *a, **k: object()
+peft_stub.LoraConfig = object
+peft_stub.TaskType = types.SimpleNamespace(CAUSAL_LM="CAUSAL_LM")
+sys.modules["peft"] = peft_stub
 
 train = importlib.import_module("scripts.train")
 resolve_model_path = train.resolve_model_path

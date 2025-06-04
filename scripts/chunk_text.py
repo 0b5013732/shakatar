@@ -2,8 +2,10 @@ import os
 from pathlib import Path
 from transformers import AutoTokenizer
 
-# Initialize tokenizer
+# Initialize tokenizer and ensure a pad token is defined
 tokenizer = AutoTokenizer.from_pretrained("gpt2")
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
 
 # Define configurable variables
 max_tokens = 512
@@ -33,6 +35,8 @@ def clean_text(text):
 
 def chunk_text(text, tokenizer, max_tokens, stride):
     """Chunks the text using the tokenizer."""
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
     tokens = tokenizer(
         text,
         return_overflowing_tokens=True,
