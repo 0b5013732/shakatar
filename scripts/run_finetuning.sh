@@ -24,6 +24,11 @@ echo "Output will be saved to the directory specified in config.yaml (./output b
 
 # Command to run Axolotl
 # Ensure Axolotl is installed and accessible in your environment.
+if ! command -v axolotl >/dev/null 2>&1; then
+    echo "Error: Axolotl CLI not found. Please install it and ensure it is in your PATH."
+    exit 1
+fi
+
 axolotl train ./config.yaml
 
 # Check exit status of Axolotl
