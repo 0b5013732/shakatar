@@ -40,6 +40,7 @@ def setup_modules(called):
         from_pretrained=lambda *a, **k: types.SimpleNamespace(pad_token=None, eos_token="</s>")
     )
     fake_tf.AutoModelForCausalLM = types.SimpleNamespace(from_pretrained=fake_from_pretrained)
+    fake_tf.BitsAndBytesConfig = types.SimpleNamespace()
     fake_tf.DataCollatorForLanguageModeling = lambda tokenizer=None, mlm=False: object()
     fake_tf.Trainer = DummyTrainer
     fake_tf.TrainingArguments = DummyArgs

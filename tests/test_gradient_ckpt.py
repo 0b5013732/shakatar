@@ -36,6 +36,7 @@ def test_gradient_checkpointing_flag(tmp_path):
     fake_tf.AutoModelForCausalLM = types.SimpleNamespace(
         from_pretrained=lambda *a, **k: types.SimpleNamespace(to=lambda *_: None)
     )
+    fake_tf.BitsAndBytesConfig = types.SimpleNamespace()
     fake_tf.DataCollatorForLanguageModeling = lambda tokenizer=None, mlm=False: object()
     fake_tf.TrainingArguments = DummyArgs
     fake_tf.Trainer = DummyTrainer
