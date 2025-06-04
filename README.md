@@ -203,6 +203,8 @@ Execute the `run_finetuning.sh` script to start the Axolotl fine-tuning process.
 bash scripts/run_finetuning.sh
 ```
 
+The script verifies that the `axolotl` command is available and exits with an informative message if it isn't. Ensure the CLI is installed and on your `PATH`.
+
 This will:
 - Use the `config.yaml` for settings.
 - Read the dataset from `data/processed/formatted_dataset.txt`.
