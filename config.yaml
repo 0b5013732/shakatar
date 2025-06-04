@@ -1,4 +1,4 @@
-base_model: meta-llama/Llama-2-7b-hf
+base_model: Llama-3.2-1B
 model_type: LlamaForCausalLM
 load_in_4bit: true
 adapter: qlora
