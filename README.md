@@ -189,7 +189,7 @@ This will generate `data/processed/formatted_dataset.txt`.
 
 The default fine-tuning parameters are set in `config.yaml`. You can modify this file to change:
 - `base_model`: If you want to use a different LLaMA model.
-- `dataset.path`: If your formatted dataset is named or located differently.
+- `datasets[0].path`: If your formatted dataset is named or located differently.
 - `training.*`: Parameters like `num_train_epochs`, `learning_rate`, `per_device_train_batch_size`, etc.
 - `bf16`: Set to `false` if your GPU does not support bfloat16.
 
@@ -207,7 +207,7 @@ The script verifies that the `axolotl` command is available and exits with an in
 
 This will:
 - Use the `config.yaml` for settings.
-- Read the dataset from `data/processed/formatted_dataset.txt`.
+- Read the dataset from `data/processed/formatted_dataset.txt` (as referenced by `datasets[0].path`).
 - Save model checkpoints and the final model to the `./output/` directory (or as specified in `config.yaml`).
 
 The process can take a significant amount of time depending on your dataset size, hardware, and training epochs.

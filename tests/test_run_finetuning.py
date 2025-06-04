@@ -10,7 +10,7 @@ def test_run_finetuning_requires_axolotl(tmp_path):
 
     cfg = tmp_path / "config.yaml"
     cfg.write_text(
-        f"dataset:\n  path: {dataset}\ntraining:\n  output_dir: {tmp_path / 'out'}\n"
+        f"datasets:\n  - path: {dataset}\n    type: text\ntraining:\n  output_dir: {tmp_path / 'out'}\n"
     )
 
     script_dst = tmp_path / "run_finetuning.sh"

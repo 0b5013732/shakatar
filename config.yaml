@@ -3,9 +3,9 @@ model_type: LlamaForCausalLM
 load_in_4bit: true
 adapter: qlora
 
-dataset:
-  path: ./data/processed/formatted_dataset.txt
-  type: text
+datasets:
+  - path: ./data/processed/formatted_dataset.txt
+    type: text
 
 training:
   output_dir: ./output
