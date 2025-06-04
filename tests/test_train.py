@@ -1,8 +1,12 @@
 import importlib
+import os
 import sys
 import types
 import unittest
 from unittest import mock
+
+# Ensure scripts package is importable when tests are run from the tests folder
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Create a minimal fake torch module for testing
 fake_torch = types.ModuleType('torch')
@@ -15,14 +19,21 @@ fake_datasets.load_dataset = lambda *a, **k: {'train': []}
 fake_transformers = types.ModuleType('transformers')
 fake_transformers.AutoTokenizer = object
 fake_transformers.AutoModelForCausalLM = object
+fake_transformers.BitsAndBytesConfig = object
 fake_transformers.DataCollatorForLanguageModeling = object
 fake_transformers.Trainer = object
 fake_transformers.TrainingArguments = object
+
+fake_peft = types.ModuleType('peft')
+fake_peft.get_peft_model = lambda *a, **k: object()
+fake_peft.LoraConfig = object
+fake_peft.TaskType = types.SimpleNamespace(CAUSAL_LM='CAUSAL_LM')
 
 with mock.patch.dict(sys.modules, {
     'torch': fake_torch,
     'datasets': fake_datasets,
     'transformers': fake_transformers,
+    'peft': fake_peft,
 }):
     train = importlib.import_module('scripts.train')
 
