@@ -153,6 +153,8 @@ def main(
         # or from device_map.
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()  # Optional: to see the effect of PEFT
+        if gradient_checkpointing:
+            model.enable_input_require_grads()
 
     # No final model.to(device) needed here, as the model (base or PEFT)
     # should already be on the correct device from the previous .to(device) call or device_map.
