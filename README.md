@@ -227,6 +227,18 @@ python scripts/test_model.py --help
 
 The script will load the model and enter an interactive mode where you can type prompts and see the generated text.
 
+## Hosted Training with Modal
+
+A helper script, `scripts/modal_train.py`, submits the fine-tuning job to [Modal](https://modal.com/). After installing the `modal` package and running `python3 -m modal setup`, launch training remotely:
+
+```bash
+modal run scripts/modal_train.py --data data/processed/formatted_dataset.txt \
+  --out output --model Llama-3.2-1B --epochs 3 --batch-size 4 --bits 4 \
+  --gradient-checkpointing
+```
+
+The arguments mirror those of `scripts/train.py`.
+
 ## Notes
 - **Dataset Size**: For effective style learning, a dataset of 5,000–50,000 chunks (roughly 100k–1M words after cleaning and chunking) is recommended.
 - **Cleaning**: The `chunk_text.py` script includes basic cleaning. You may need to enhance the `clean_text` function within it for specific metadata or formatting issues in your source texts.
