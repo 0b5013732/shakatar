@@ -5,6 +5,7 @@
 DATASET="./data/processed/formatted_dataset.txt"
 OUT_DIR="./output"
 MODEL="Llama-3.2-1B"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Check for required dataset
 if [ ! -f "$DATASET" ]; then
@@ -15,8 +16,10 @@ fi
 
 # Verify required Python packages
 python - <<'PY'
-import importlib, sys
-missing=[pkg for pkg in ("trl","peft") if importlib.util.find_spec(pkg) is None]
+import importlib.util
+import sys
+
+missing = [pkg for pkg in ("trl", "peft") if importlib.util.find_spec(pkg) is None]
 if missing:
     print(f"Missing packages: {', '.join(missing)}")
     sys.exit(1)
@@ -26,7 +29,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-python scripts/train.py \
+python "$SCRIPT_DIR/train.py" \
   --data "$DATASET" \
   --out "$OUT_DIR" \
   --model "$MODEL" \
