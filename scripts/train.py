@@ -25,6 +25,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+from transformers.integrations.bitsandbytes import validate_bnb_backend_availability
 from peft import get_peft_model, LoraConfig, TaskType
 
 def select_device(local_rank: int) -> str:
@@ -69,6 +70,18 @@ def resolve_model_path(base_model: str) -> str:
     return sanitized
 
 
+def ensure_bnb_support(bits: int) -> None:
+    """Raise RuntimeError if quantization with bitsandbytes is requested but unsupported."""
+    if bits in (4, 8):
+        try:
+            import bitsandbytes  # noqa: F401
+            validate_bnb_backend_availability(raise_exception=True)
+        except Exception as exc:
+            raise RuntimeError(
+                f"bitsandbytes 4/8-bit quantization unavailable: {exc}."
+            ) from exc
+
+
 def main(
     data_path: str,
     model_dir: str,
@@ -98,6 +111,8 @@ def main(
     dataset = load_dataset("json", data_files=data_path)["train"]
 
     sanitized = resolve_model_path(base_model)
+
+    ensure_bnb_support(bits)
 
     tokenizer = AutoTokenizer.from_pretrained(sanitized)
     if tokenizer.pad_token is None:

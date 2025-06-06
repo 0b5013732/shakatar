@@ -3,6 +3,7 @@ import os
 import sys
 import types
 from unittest import mock
+import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -54,12 +55,18 @@ def setup_modules(called):
 
     fake_bnb = types.ModuleType("bitsandbytes")
 
+    integ_mod = types.ModuleType("transformers.integrations")
+    bnb_integ = types.ModuleType("transformers.integrations.bitsandbytes")
+    bnb_integ.validate_bnb_backend_availability = lambda raise_exception=True: None
+
     return {
         "torch": fake_torch,
         "datasets": fake_ds,
         "transformers": fake_tf,
         "peft": fake_peft,
         "bitsandbytes": fake_bnb,
+        "transformers.integrations": integ_mod,
+        "transformers.integrations.bitsandbytes": bnb_integ,
     }
 
 
@@ -87,6 +94,22 @@ def test_load_in_4bit(tmp_path):
     sys.modules.pop("scripts.train", None)
 
 
+def test_quantization_unavailable(tmp_path):
+    called = {}
+    modules = setup_modules(called)
+    # Override validation function to raise
+    modules["transformers.integrations.bitsandbytes"].validate_bnb_backend_availability = (
+        lambda raise_exception=True: (_ for _ in ()).throw(RuntimeError("nope"))
+    )
+    with mock.patch.dict(sys.modules, modules):
+        train = importlib.import_module("scripts.train")
+        importlib.reload(train)
+        with pytest.raises(RuntimeError):
+            train.main("data", str(tmp_path), "model", 1, 1, -1, False, 4)
+    sys.modules.pop("scripts.train", None)
+
+
 def test_bitsandbytes_importable():
     # This test is now moot as we are mocking bitsandbytes
     pass
+

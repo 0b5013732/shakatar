@@ -23,6 +23,9 @@ fake_transformers.BitsAndBytesConfig = object
 fake_transformers.DataCollatorForLanguageModeling = object
 fake_transformers.Trainer = object
 fake_transformers.TrainingArguments = object
+integrations_stub = types.ModuleType('transformers.integrations')
+bnb_stub = types.ModuleType('transformers.integrations.bitsandbytes')
+bnb_stub.validate_bnb_backend_availability = lambda raise_exception=True: None
 
 fake_peft = types.ModuleType('peft')
 fake_peft.get_peft_model = lambda *a, **k: object()
@@ -33,6 +36,8 @@ with mock.patch.dict(sys.modules, {
     'torch': fake_torch,
     'datasets': fake_datasets,
     'transformers': fake_transformers,
+    'transformers.integrations': integrations_stub,
+    'transformers.integrations.bitsandbytes': bnb_stub,
     'peft': fake_peft,
 }):
     train = importlib.import_module('scripts.train')
