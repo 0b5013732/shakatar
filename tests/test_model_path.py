@@ -27,7 +27,12 @@ for attr in [
     "TrainingArguments",
 ]:
     setattr(transformers_stub, attr, object)
+integrations_stub = types.ModuleType("transformers.integrations")
+bnb_stub = types.ModuleType("transformers.integrations.bitsandbytes")
+bnb_stub.validate_bnb_backend_availability = lambda raise_exception=True: None
 sys.modules["transformers"] = transformers_stub
+sys.modules["transformers.integrations"] = integrations_stub
+sys.modules["transformers.integrations.bitsandbytes"] = bnb_stub
 
 peft_stub = types.ModuleType("peft")
 peft_stub.get_peft_model = lambda *a, **k: object()
