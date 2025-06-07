@@ -180,6 +180,7 @@ def main(
         local_rank=local_rank,
         gradient_checkpointing=gradient_checkpointing,
         gradient_accumulation_steps=gradient_accumulation_steps, # New argument
+        ddp_find_unused_parameters=False,
     )
 
     trainer = Trainer(model=model, args=args, train_dataset=tokenized, data_collator=collator)
