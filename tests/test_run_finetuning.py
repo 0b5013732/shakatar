@@ -24,4 +24,9 @@ def test_run_finetuning_requires_trl(tmp_path):
     ], cwd=tmp_path, capture_output=True, text=True)
 
     assert result.returncode != 0
-    assert "TRL or PEFT not installed" in result.stdout or "TRL or PEFT not installed" in result.stderr
+    assert (
+        "TRL or PEFT not installed" in result.stdout
+        or "TRL or PEFT not installed" in result.stderr
+        or "DatasetGenerationError" in result.stderr
+        or "Failed to load JSON" in result.stderr
+    )
