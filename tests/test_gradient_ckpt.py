@@ -62,6 +62,7 @@ def test_gradient_checkpointing_flag(tmp_path):
         importlib.reload(train)
         train.main('data', str(tmp_path), 'model', 1, 1, -1, True)
         assert DummyArgs.kwargs['gradient_checkpointing'] is True
+        assert DummyArgs.kwargs['ddp_find_unused_parameters'] is False
 
 
 def test_enable_input_grads_called(tmp_path):
