@@ -138,8 +138,8 @@ This project provides scripts and configuration to fine-tune a LLaMA model (e.g.
 - `data/`:
     - `corpus/`: Place your raw author text files (`.txt`) here. You can create subdirectories.
         - `.gitkeep`: Placeholder, safe to remove if you add your own data.
-    - `processed/`: Output directory for the formatted dataset.
-        - `formatted_dataset.txt`: The chunked and formatted text data for training.
+    - `processed/`: Output directory for the processed dataset.
+        - `corpus.jsonl`: JSONL file with one object per text chunk.
         - `.gitkeep`: Placeholder.
 - `scripts/`:
     - `chunk_text.py`: Python script to process raw text files into a formatted dataset.
@@ -180,7 +180,7 @@ Run the `chunk_text.py` script to process your raw text files into the required 
 python scripts/chunk_text.py
 ```
 
-This will generate `data/processed/formatted_dataset.txt`.
+This will generate `data/processed/corpus.jsonl`.
 
 ### 3. Configure Fine-Tuning (Optional)
 
@@ -205,7 +205,7 @@ bash scripts/run_finetuning.sh
 The script checks that the required Python packages are installed and then launches `train.py` with sensible defaults.
 
 This will:
-- Read the dataset from `data/processed/formatted_dataset.txt`.
+- Read the dataset from `data/processed/corpus.jsonl`.
 
 The process can take a significant amount of time depending on your dataset size, hardware, and training epochs.
 
@@ -232,7 +232,7 @@ The script will load the model and enter an interactive mode where you can type 
 A helper script, `scripts/modal_train.py`, submits the fine-tuning job to [Modal](https://modal.com/). After installing the `modal` package and running `python3 -m modal setup`, launch training remotely:
 
 ```bash
-modal run scripts/modal_train.py --data data/processed/formatted_dataset.txt \
+modal run scripts/modal_train.py --data data/processed/corpus.jsonl \
   --out output --model Llama-3.2-1B --epochs 3 --batch-size 4 --bits 4 \
   --gradient-checkpointing
 ```

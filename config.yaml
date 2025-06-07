@@ -4,7 +4,7 @@ load_in_4bit: true
 adapter: qlora
 
 datasets:
-  - path: ./data/processed/formatted_dataset.txt
+  - path: ./data/processed/corpus.jsonl
     type: text
 
 training:

@@ -6,7 +6,7 @@ import shutil
 def test_run_finetuning_requires_trl(tmp_path):
     data_dir = tmp_path / "data" / "processed"
     data_dir.mkdir(parents=True)
-    dataset = data_dir / "formatted_dataset.txt"
+    dataset = data_dir / "corpus.jsonl"
     dataset.write_text("dummy\n")
 
     script_dst = tmp_path / "run_finetuning.sh"
