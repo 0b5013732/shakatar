@@ -15,6 +15,7 @@ data/corpus/*.txt
 
 # Ignore the processed dataset file
 data/processed/formatted_dataset.txt
+data/processed/corpus.jsonl
 
 # Ignore model outputs and checkpoints
 output/
