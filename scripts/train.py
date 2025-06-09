@@ -28,6 +28,7 @@ from transformers import (
 from transformers.integrations.bitsandbytes import validate_bnb_backend_availability
 from peft import get_peft_model, LoraConfig, TaskType
 
+
 def select_device(local_rank: int) -> str:
     """Return a torch device string for ``local_rank``.
 
@@ -75,6 +76,7 @@ def ensure_bnb_support(bits: int) -> None:
     if bits in (4, 8):
         try:
             import bitsandbytes  # noqa: F401
+
             validate_bnb_backend_availability(raise_exception=True)
         except Exception as exc:
             raise RuntimeError(
@@ -91,8 +93,8 @@ def main(
     local_rank: int,
     gradient_checkpointing: bool = False,
     bits: int = 16,
-    gradient_accumulation_steps: int = 1, # New parameter
-    max_seq_length: int = 512, # Added default value here
+    gradient_accumulation_steps: int = 1,  # New parameter
+    max_seq_length: int = 512,  # Added default value here
 ):
     """Run the fine-tuning loop.
 
@@ -103,9 +105,7 @@ def main(
     """
     device = select_device(local_rank)
 
-    print(
-        f"Training with {data_path}; base model {base_model}; output to {model_dir}"
-    )
+    print(f"Training with {data_path}; base model {base_model}; output to {model_dir}")
     print(f"Detected device: {device}")
 
     dataset = load_dataset("json", data_files=data_path)["train"]
@@ -145,7 +145,7 @@ def main(
             r=8,  # Rank
             lora_alpha=32,  # Alpha scaling
             lora_dropout=0.1,
-            target_modules=["q_proj", "v_proj"]  # Common for Llama
+            target_modules=["q_proj", "v_proj"],  # Common for Llama
         )
         # Ensure model is on the correct device before applying PEFT,
         # especially if it was loaded on CPU then moved.
@@ -160,7 +160,12 @@ def main(
     # should already be on the correct device from the previous .to(device) call or device_map.
 
     def tokenize(batch):
-        return tokenizer(batch["text"], truncation=True, padding="max_length", max_length=max_seq_length)
+        return tokenizer(
+            batch["text"],
+            truncation=True,
+            padding="max_length",
+            max_length=max_seq_length,
+        )
 
     tokenized = dataset.map(tokenize, batched=True, remove_columns=["text"])
 
@@ -179,22 +184,25 @@ def main(
         fp16=fp16,
         local_rank=local_rank,
         gradient_checkpointing=gradient_checkpointing,
-        gradient_accumulation_steps=gradient_accumulation_steps, # New argument
+        gradient_accumulation_steps=gradient_accumulation_steps,  # New argument
         ddp_find_unused_parameters=False,
     )
 
-    trainer = Trainer(model=model, args=args, train_dataset=tokenized, data_collator=collator)
+    trainer = Trainer(
+        model=model, args=args, train_dataset=tokenized, data_collator=collator
+    )
     trainer.train()
     trainer.save_model(model_dir)
+
+    if getattr(torch, "distributed", None) and torch.distributed.is_initialized():
+        torch.distributed.destroy_process_group()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="../data/processed/corpus.jsonl")
     parser.add_argument("--out", default="../model")
-    parser.add_argument(
-        "--model", default="llama-base", help="Base model name or path"
-    )
+    parser.add_argument("--model", default="llama-base", help="Base model name or path")
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument(
@@ -221,7 +229,12 @@ if __name__ == "__main__":
         default=1,
         help="Number of steps to accumulate gradients before performing an optimizer step",
     )
-    parser.add_argument("--max_seq_length", type=int, default=512, help="Maximum sequence length for tokenization.")
+    parser.add_argument(
+        "--max_seq_length",
+        type=int,
+        default=512,
+        help="Maximum sequence length for tokenization.",
+    )
     args = parser.parse_args()
 
     Path(args.out).mkdir(parents=True, exist_ok=True)
@@ -234,6 +247,6 @@ if __name__ == "__main__":
         args.local_rank,
         args.gradient_checkpointing,
         args.bits,
-        args.gradient_accumulation_steps, # Pass new argument
+        args.gradient_accumulation_steps,  # Pass new argument
         args.max_seq_length,
     )
