@@ -4,7 +4,7 @@
 
 DATASET="./data/processed/corpus.jsonl"
 OUT_DIR="./output"
-MODEL="Llama-3.2-1B"
+MODEL="meta-llama/Llama-3.2-1B"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Check for required dataset
